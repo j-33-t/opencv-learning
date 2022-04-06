@@ -24,6 +24,9 @@ def preProcessing(img):
     return imgThres
 
 
+
+
+
 def getContours(img):
     biggest = np.array([])
     maxArea = 0
@@ -31,19 +34,19 @@ def getContours(img):
     for cnt in contours:
         area = cv.contourArea(cnt)
         if area > 5000:
-            #cv.drawContours(imgContour, cnt, -1, (255, 0, 0), 3)
+            cv.drawContours(imgContour, cnt, -1, (255, 0, 0), 3)
             peri = cv.arcLength(cnt,True)
             approx = cv.approxPolyDP(cnt,0.02*peri,True)
-            if area >maxArea and len(approx) == 4:
+            if area > maxArea and len(approx) == 4:
                 biggest = approx
-                maxArea = area
-    cv.drawContours(imgContour, biggest, -1, (255, 0, 0), 20)
+                maxArea = area        
+#     cv.drawContours(imgContour, biggest, -1, (255, 0, 0), 20)
     return biggest
 
 
-def getWarp(img, biggest):
+# def getWarp(img, biggest):
     
-    pass
+#     pass
 
 while True:
     success, img = WebCam.read()
@@ -57,15 +60,15 @@ while True:
     # Adding imgThreshold
     imgThres = preProcessing(img)
     
-    # Adding contour to imgThreshold
-    biggest = getContours(imgThres)
-    getWarp(img,biggest)
+    # # Adding contour to imgThreshold
+    getContours(imgThres)
+    # getWarp(img,biggest)
     
     # Flip image
     imgThres = cv.flip(imgThres,1)
     
     # Show results
-    cv.imshow("Result", imgThres)
+    cv.imshow("Result", imgContour)
     
     # Add Delay and Key to Break loop
     if cv.waitKey(33) & 0xFF==ord("q"):
