@@ -14,3 +14,5 @@ Course Outline:
 - Project 2: Document Scanner
 - Project 3: Detect car number plate
 
+
+Course Credits : https://github.com/murtazahassan
