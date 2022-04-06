@@ -1,17 +1,15 @@
-# Imports
-import cv2 as cv
+import cv2 as cv 
 import numpy as np
-
 from my_functions_open_cv.stacking import stackImages
 
-widthImg, heightImg = 540, 640
+###################################
+widthImg=540
+heightImg =640
+#####################################
 
-# ################    
-#  Using Webcam  #
-# ################
+cap = cv.VideoCapture(0)
+cap.set(10,150)
 
-WebCam = cv.VideoCapture(0)
-WebCam.set(10,150)
 
 def preProcessing(img):
     imgGray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
@@ -22,7 +20,6 @@ def preProcessing(img):
     imgThres = cv.erode(imgDial,kernel,iterations=1)
     return imgThres
 
-
 def getContours(img):
     biggest = np.array([])
     maxArea = 0
@@ -30,6 +27,7 @@ def getContours(img):
     for cnt in contours:
         area = cv.contourArea(cnt)
         if area>5000:
+            #cv.drawContours(imgContour, cnt, -1, (255, 0, 0), 3)
             peri = cv.arcLength(cnt,True)
             approx = cv.approxPolyDP(cnt,0.02*peri,True)
             if area >maxArea and len(approx) == 4:
@@ -42,13 +40,13 @@ def reorder (myPoints):
     myPoints = myPoints.reshape((4,2))
     myPointsNew = np.zeros((4,1,2),np.int32)
     add = myPoints.sum(1)
-
+    #print("add", add)
     myPointsNew[0] = myPoints[np.argmin(add)]
     myPointsNew[3] = myPoints[np.argmax(add)]
     diff = np.diff(myPoints,axis=1)
     myPointsNew[1]= myPoints[np.argmin(diff)]
     myPointsNew[2] = myPoints[np.argmax(diff)]
-
+    #print("NewPoints",myPointsNew)
     return myPointsNew
 
 def getWarp(img,biggest):
@@ -63,41 +61,28 @@ def getWarp(img,biggest):
 
     return imgCropped
 
-    
-# While Loop to display the Webcam Document Reading program
+
 
 while True:
-    success, img = WebCam.read()
-    
-    # Resize width and height of img
+    success, img = cap.read()
     img = cv.resize(img,(widthImg,heightImg))
-    
-    # Copy img
     imgContour = img.copy()
 
-    # Pre-processing Image
     imgThres = preProcessing(img)
-    
-    # Adding contour to imgThreshold
     biggest = getContours(imgThres)
-    
-    # Avoid Error when biggest size is not found
     if biggest.size !=0:
-        # Warping Image
         imgWarped=getWarp(img,biggest)
-
+        # imageArray = ([img,imgThres],
+        #           [imgContour,imgWarped])
         imageArray = ([imgContour, imgWarped])
         cv.imshow("ImageWarped", imgWarped)
     else:
-
+        # imageArray = ([img, imgThres],
+        #               [img, img])
         imageArray = ([imgContour, img])
 
-    # Stacking Images
     stackedImages = stackImages(0.6,imageArray)
-    
-    # Show results
     cv.imshow("WorkFlow", stackedImages)
 
-    # Add Delay and Key to Break loop
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
