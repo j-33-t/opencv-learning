@@ -11,5 +11,6 @@ Course Outline:
 8. detect shapes & outline shapes
 9. detect faces
 - Project 1: Paint using color identifcaion
-- Project 2: Document Scanner 
+- Project 2: Document Scanner
+- Project 3: Detect car number plate
 
