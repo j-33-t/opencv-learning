@@ -1,4 +1,4 @@
-OpenCv course repo
+OpenCv Learning
 
 Course Outline:
 1. read images/videos
